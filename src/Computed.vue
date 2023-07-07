@@ -49,6 +49,6 @@
 .progress-bar-text {
     margin-left: 10px;
     font-weight: bold;
-    color: #cce7f5;
+    color: #131d22;
 }
 </style>
