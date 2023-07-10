@@ -1,39 +1,89 @@
 <script setup>
-import {ref, computed} from 'vue'
-const arrFrutas = ref([
-  {name: 'Manzana', price: 30},
-  {name: 'Pera', price: 33},
-  {name: 'Platano', price: 31}
+import {ref, computed} from 'vue';
+import Fruts from './components/Fruts.vue';
+
+const isModeNight = ref(true);
+
+const listVerduras = ref([
+  {
+    name: 'Jitomate',
+    cantidad: 0
+  },
+  {
+    name: 'Cebolla',
+    cantidad: 0
+  },
+  {
+    name: 'Limón',
+    cantidad: 0
+  }
 ])
-let nuevaFruta = ''
-let nuevoPrecio = 0;
-const showFruit = ( ) => {
-  arrFrutas.value.push({name: nuevaFruta, price: nuevoPrecio}); nuevaFruta = ''; nuevoPrecio = 0;
+
+const mode = computed(() => {
+ if(isModeNight.value){
+  return [
+    'background-color: var(--mode-oscuro)',
+    'color: var(--text-md-oscuro)'
+  ]
+ }
+ else{
+  return [
+    'background-color: var(--mode-claro);',
+    'color: var(--text-md-claro)'
+  ]
+ }
+})
+
+const arrOrdenado = computed(() => {
+  return listVerduras.value.sort((a,b) => b.cantidad - a.cantidad)
+})
+
+const changeMode = () => {
+  isModeNight.value = !isModeNight.value
 }
 
-const sumarPrecios = computed (() => {
-  let total = 0;
-  for (let frutas of arrFrutas.value) {
-    total = total + frutas.price;
+const reset = () => {
+  for(let verdura of listVerduras.value){
+    verdura.cantidad = 0;
   }
-  return total;
-})
+}
+
 </script>
 
 <template>
-<h1>Añade tu fruta favorita</h1>
-<ul>
-  <li v-for="frutas of arrFrutas">{{frutas.name}} a ${{ frutas.price }} 
-    <span v-if="frutas.price == 0 "> - No hay</span>
-  </li>
-</ul>
-<input v-model="nuevaFruta" type="text" placeholder="Ingresa la fruta">
-<input v-model.number="nuevoPrecio" type="text" placeholder="Ingresa el precio" @keyup.enter="showFruit">
-<input type="button" value="Añadir" @click="showFruit">
-
-<h3>Total: {{ sumarPrecios }}</h3>
+  <div class="body" :style="mode">
+    <header>
+      <button @click="changeMode">{{ isModeNight ? '🌑' : '🌞'}}</button>
+      <Fruts title="Frutas & Verduras"></Fruts>
+    </header>
+  
+    <ul v-for="verdura of arrOrdenado" :key="verdura.id">
+      <li>{{ verdura.name }} {{ verdura.cantidad }}
+        <button @click="[verdura.cantidad++]">+</button>
+      </li>
+    </ul>
+    <button @click="reset">RESET</button>
+  </div>
 </template>
 
-<style>
-
+<style scoped>
+  *{
+    --claro-bg:  rgb(20, 86, 116);
+    --oscuro-bg:  rgb(74, 155, 105);
+    --mode-oscuro: rgb(29, 27, 27);
+    --mode: rgb(255,255,255);
+    --text-md-oscuro: rgb(255,255,255);
+    --text-md-claro: rgb(29,29,29);
+  }
+  .body{
+    height: 100vh;
+  }
+  ul{
+    background-color: var(--oscuro-bg);
+    margin: 4px;
+    border-radius: 10px;
+  }
+  button{
+    background-color: rgb(0,0,0,.09);
+  }
 </style>
